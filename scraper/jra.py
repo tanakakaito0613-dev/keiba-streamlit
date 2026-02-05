@@ -80,7 +80,7 @@ def get_race_info(url):
         res = requests.get(url, headers=headers, timeout=10)
         print("status:", res.status_code)
         print("length:", len(res.text))
-        print(res.text[:500])
+        print(res.text[:1000])
         res.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("HTTP error:", e)
@@ -157,6 +157,7 @@ def get_race_info(url):
         horses.append(horse)
 
     return horses
+
 
 
 
