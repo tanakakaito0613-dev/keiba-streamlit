@@ -1,5 +1,6 @@
 # scraper/netkeiba.py
 import requests
+import streamlit as st
 from bs4 import BeautifulSoup
 
 def get_race_info(url):
@@ -11,6 +12,7 @@ def get_race_info(url):
     res = requests.get(url, headers=headers, timeout=10)
     res.raise_for_status()
     res.encoding = "EUC-JP"
+    st.write(res.text[1000:])
 
     soup = BeautifulSoup(res.text, "html.parser")
 
@@ -45,3 +47,4 @@ def get_race_info(url):
             print("skip horse:", e)
 
     return horses
+
