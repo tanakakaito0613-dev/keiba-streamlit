@@ -67,7 +67,13 @@ def parse_past_race(td):
 
 def get_race_info(url):
     headers = {
-        "User-Agent": "Mozilla/5.0"
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/121.0.0.0 Safari/537.36"
+        ),
+        "Accept-Language": "ja-JP,ja;q=0.9",
+        "Referer": "https://www.jra.go.jp/"
     }
 
     res = requests.get(url, headers=headers, timeout=10)
@@ -144,3 +150,4 @@ def get_race_info(url):
         horses.append(horse)
 
     return horses
+
