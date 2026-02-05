@@ -86,7 +86,7 @@ def get_race_info(url: str):
                 pass
 
         horses.append(horse)
-        st.json(horses)
     return horses
+
 
 
