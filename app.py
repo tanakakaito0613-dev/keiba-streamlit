@@ -14,7 +14,7 @@ if st.button("予想する") and url:
         try:
             res = requests.get(url, headers=headers, timeout=10)
             res.raise_for_status()
-    except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException as e:
             print("HTTP error:", e)
             return []
     
@@ -39,4 +39,5 @@ if st.button("予想する") and url:
 
 
         st.success("予想完了！")
+
 
