@@ -17,7 +17,7 @@ def get_race_info(url: str):
     res.encoding = "EUC-JP"
     st.write("status:", res.status_code)
     st.write("length:", len(res.text))
-    st.write(res.text[:1000])
+    st.write(res.text[1000:])
     
     soup = BeautifulSoup(res.text, "html.parser")
 
@@ -91,6 +91,7 @@ def get_race_info(url: str):
 
         horses.append(horse)
     return horses
+
 
 
 
