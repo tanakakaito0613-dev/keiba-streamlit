@@ -82,6 +82,9 @@ def get_race_info(url):
     except requests.exceptions.RequestException as e:
         print("HTTP error:", e)
         return [] 
+    print("status:", res.status_code)
+    print("length:", len(res.text))
+    print(res.text[:500])
     res.encoding = "cp932"  # JRA公式
 
     soup = BeautifulSoup(res.text, "html.parser")
@@ -154,5 +157,6 @@ def get_race_info(url):
         horses.append(horse)
 
     return horses
+
 
 
