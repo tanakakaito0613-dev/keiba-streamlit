@@ -20,6 +20,7 @@ def get_race_info(url: str):
     st.write(res.text[1000:])
     
     soup = BeautifulSoup(res.text, "html.parser")
+    print(soup.text[:300])
 
     horses = []
 
@@ -91,6 +92,7 @@ def get_race_info(url: str):
 
         horses.append(horse)
     return horses
+
 
 
 
