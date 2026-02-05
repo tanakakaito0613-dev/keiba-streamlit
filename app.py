@@ -20,7 +20,7 @@ if st.button("予想する") and url:
         horses_display = []
         for h in horses:
             h_copy = h.copy()
-            h_copy['枠'] = h_copy['枠'].replace("枠", "")
+            h_copy['枠'] = h_copy.get('枠', '').replace("枠", "")
             h_copy["過去走"] = "\n".join([f"{r['日付']} {r['レース名']} {r['着順']}" for r in h['過去走']])
             horses_display.append(h_copy)
         df = pd.DataFrame(horses_display)
@@ -34,6 +34,7 @@ if st.button("予想する") and url:
 
 
         st.success("予想完了！")
+
 
 
 
