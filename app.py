@@ -16,7 +16,7 @@ if st.button("予想する") and url:
             res.raise_for_status()
         except requests.exceptions.RequestException as e:
             print("HTTP error:", e)
-        return []
+            return []
     
     if not horses:
         st.warning("出馬表が取得できませんでした。URLを確認してください。")
@@ -39,6 +39,7 @@ if st.button("予想する") and url:
 
 
         st.success("予想完了！")
+
 
 
 
