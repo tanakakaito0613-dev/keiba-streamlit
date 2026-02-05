@@ -1,5 +1,5 @@
 import requests
-import stramlit as st
+import streamlit as st
 from bs4 import BeautifulSoup
 import time
 
@@ -13,6 +13,9 @@ HEADERS = {
 
 def get_race_info(url: str):
     res = requests.get(url, headers=HEADERS, timeout=10)
+    st.write("status:", res.status_code)
+    st.write("length:", len(res.text))
+    st.write(res.text[:1000])
     res.raise_for_status()
 
     soup = BeautifulSoup(res.text, "html.parser")
@@ -87,6 +90,7 @@ def get_race_info(url: str):
 
         horses.append(horse)
     return horses
+
 
 
 
