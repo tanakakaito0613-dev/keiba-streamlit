@@ -11,13 +11,8 @@ url = st.text_input("レースURLを入力（jra公式から取得してくだ�
 
 if st.button("予想する") and url:
     with st.spinner("出馬表を取得中…"):
-        try:
-            res = requests.get(url, headers=headers, timeout=10)
-            res.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            print("HTTP error:", e)
-            return []
-    
+        horses = get_race_info(url)
+        
     if not horses:
         st.warning("出馬表が取得できませんでした。URLを確認してください。")
     else:
@@ -39,6 +34,7 @@ if st.button("予想する") and url:
 
 
         st.success("予想完了！")
+
 
 
 
