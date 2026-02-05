@@ -30,31 +30,29 @@ def get_race_info(url: str):
         return []
 
     horses = []
-
-
-   for row in table.select("tr.HorseList"):
-    try:
-        waku = row.select_one("td[class^=Waku]")
-        umaban = row.select_one("td[class^=Umaban]")
-
-        horse_anchor = row.select_one("span.HorseName a")
-
-        sex_age = row.select_one("td.Barei")
-        sex, age = None, None
-        if sex_age:
-            t = sex_age.get_text(strip=True)
-            sex = t[0]
-            age = t[1:]
-
+    
+    for row in table.select("tr.HorseList"):
+        try:
+            waku = row.select_one("td[class^=Waku]")
+            umaban = row.select_one("td[class^=Umaban]")
+            horse_anchor = row.select_one("span.HorseName a")
+            sex_age = row.select_one("td.Barei")
+            sex, age = None, None
+            
+            if sex_age:
+                t = sex_age.get_text(strip=True)
+                sex = t[0]
+                age = t[1:]
+                
         weight_el = row.select_one("td.Dredging")
         jockey_el = row.select_one("td.Jockey a")
-
         odds_el = row.select_one("td.Popular span")
         ninki_el = row.select_one("td.Popular_Ninki span")
-
+        
         def clean(v):
             return None if not v or v in ("--", "**", "---.-") else v
-
+            
+    
         # 血統
         sire = mare = None
         blood_td = row.select_one("td.Blood")
@@ -96,3 +94,4 @@ def get_race_info(url: str):
 
     except Exception as e:
         print("skip horse:", e)
+
