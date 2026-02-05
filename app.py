@@ -7,7 +7,7 @@ st.set_page_config(page_title="競馬予想AI", page_icon="🏇")
 st.title("🏇 競馬予想AI")
 
 # URL入力
-url = st.text_input("レースURLを入力", "")
+url = st.text_input("レースURLを入力（jra公式から取得してください）", "")
 
 if st.button("予想する") and url:
     with st.spinner("出馬表を取得中…"):
@@ -31,5 +31,6 @@ if st.button("予想する") and url:
 
         st.markdown("### 🤖 AI予想")
         st.write(result)
+
 
         st.success("予想完了！")
