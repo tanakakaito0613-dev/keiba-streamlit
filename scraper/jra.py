@@ -76,8 +76,12 @@ def get_race_info(url):
         "Referer": "https://www.jra.go.jp/"
     }
 
-    res = requests.get(url, headers=headers, timeout=10)
-    res.raise_for_status()
+    try:
+        res = requests.get(url, headers=headers, timeout=10)
+        res.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("HTTP error:", e)
+        return [] 
     res.encoding = "cp932"  # JRA公式
 
     soup = BeautifulSoup(res.text, "html.parser")
@@ -150,4 +154,5 @@ def get_race_info(url):
         horses.append(horse)
 
     return horses
+
 
