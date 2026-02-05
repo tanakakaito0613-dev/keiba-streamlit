@@ -1,5 +1,5 @@
 import requests
-streamlit as st
+import streamlit as st
 from bs4 import BeautifulSoup
 import re
 
@@ -125,3 +125,4 @@ def get_race_info(url: str):
             print("skip horse:", e)
 
     return horses
+
