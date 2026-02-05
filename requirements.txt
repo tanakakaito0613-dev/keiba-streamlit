@@ -1,0 +1,9 @@
+streamlit
+requests
+beautifulsoup4
+pandas
+numpy
+lxml
+google-generativeai
+matplotlib
+pyparsing<3.1
