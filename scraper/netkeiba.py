@@ -12,6 +12,9 @@ HEADERS = {
     "Referer": "https://race.netkeiba.com/"
 }
 
+def safe_text(cols, idx):
+    return cols[idx].get_text(strip=True) if len(cols) > idx else None
+
 def get_race_info(url: str):
     # newspaper.html を前提
     res = requests.get(url, headers=HEADERS, timeout=10)
@@ -29,100 +32,67 @@ def get_race_info(url: str):
     horses = []
 
 
-    # ===== 出馬表の各馬の基本情報 =====
-    for row in table.select("tr.HorseList"):
-        try:
-            # 枠
-            waku_td = row.find("td", class_=lambda c: c and c.startswith("Waku"))
-            waku = waku_td.get_text(strip=True) if waku_td else None
+   for row in table.select("tr.HorseList"):
+    try:
+        waku = row.select_one("td[class^=Waku]")
+        umaban = row.select_one("td[class^=Umaban]")
 
-            # 馬番
-            uma_td = row.find("td", class_=lambda c: c and c.startswith("Umaban"))
-            umaban = uma_td.get_text(strip=True) if uma_td else None
+        horse_anchor = row.select_one("span.HorseName a")
 
-            # 馬名
-            horse_anchor = row.select_one("span.HorseName a")
-            horse_name = horse_anchor.get_text(strip=True) if horse_anchor else None
+        sex_age = row.select_one("td.Barei")
+        sex, age = None, None
+        if sex_age:
+            t = sex_age.get_text(strip=True)
+            sex = t[0]
+            age = t[1:]
 
-            # 性・年齢
-            sex_age = row.select_one("td.Barei")
-            sex = None
-            age = None
-            if sex_age:
-                sa_txt = sex_age.get_text(strip=True)
-                sex = sa_txt[0] if sa_txt else None
-                age = sa_txt[1:] if sa_txt and len(sa_txt) > 1 else None
+        weight_el = row.select_one("td.Dredging")
+        jockey_el = row.select_one("td.Jockey a")
 
-            # 斤量
-            weight_el = row.select_one("td.Txt_C")
-            weight = weight_el.get_text(strip=True) if weight_el else None
+        odds_el = row.select_one("td.Popular span")
+        ninki_el = row.select_one("td.Popular_Ninki span")
 
-            # 騎手
-            jockey_el = row.select_one("td.Jockey a")
-            jockey = jockey_el.get_text(strip=True) if jockey_el else None
+        def clean(v):
+            return None if not v or v in ("--", "**", "---.-") else v
 
-            # オッズ（newsでは載ってない可能性あり）
-            odds = None
-            odds_el = row.select_one("td.Popular span")
-            if odds_el:
-                odds = odds_el.get_text(strip=True)
+        # 血統
+        sire = mare = None
+        blood_td = row.select_one("td.Blood")
+        if blood_td:
+            lines = blood_td.get_text("\n", strip=True).split("\n")
+            if len(lines) >= 2:
+                sire, mare = lines[0], lines[1]
 
-            # 人気
-            nin_el = row.select_one("td.Popular_Ninki span")
-            ninki = nin_el.get_text(strip=True) if nin_el else None
+        # 過去走
+        past_race_list = []
+        past_table = row.find_next("table", class_="RaceTable02")
+        if past_table:
+            for pr in past_table.select("tr")[1:]:
+                tds = pr.select("td")
+                if len(tds) >= 7:
+                    past_race_list.append({
+                        "日付": tds[0].get_text(strip=True),
+                        "競馬場": tds[1].get_text(strip=True),
+                        "距離": tds[3].get_text(strip=True),
+                        "馬場状態": tds[4].get_text(strip=True),
+                        "着順": tds[5].get_text(strip=True),
+                        "頭数": tds[6].get_text(strip=True)
+                    })
 
-            # index マップ用
-            idx = umaban
+        horses.append({
+            "枠": waku.get_text(strip=True) if waku else None,
+            "馬番": umaban.get_text(strip=True) if umaban else None,
+            "馬名": horse_anchor.get_text(strip=True) if horse_anchor else None,
+            "性": sex,
+            "年齢": age,
+            "斤量": weight_el.get_text(strip=True) if weight_el else None,
+            "騎手": jockey_el.get_text(strip=True) if jockey_el else None,
+            "オッズ": clean(odds_el.get_text(strip=True)) if odds_el else None,
+            "人気": clean(ninki_el.get_text(strip=True)) if ninki_el else None,
+            "父": sire,
+            "母": mare,
+            "過去走": past_race_list
+        })
 
-            # ===== 馬柱（過去走） =====
-            # newspaper.html 上で馬柱がまとまっている
-            # 馬柱のテーブルは .HorseList を index で分ける
-            # ここでは馬柱IDに umaban が使われている
-            past_race_list = []
-            horse_row_in_past = soup.select_one(f"table#race_history{idx}")
-            if horse_row_in_past:
-                for pr in horse_row_in_past.select("tr")[1:]:
-                    tds = pr.select("td")
-                    if len(tds) > 6:
-                        past_race_list.append({
-                            "日付": tds[0].get_text(strip=True),
-                            "競馬場": tds[1].get_text(strip=True),
-                            "距離": tds[3].get_text(strip=True),
-                            "馬場状態": tds[4].get_text(strip=True),
-                            "着順": tds[5].get_text(strip=True),
-                            "頭数": tds[6].get_text(strip=True)
-                        })
-
-            # ===== 血統（父・母） =====
-            # blood_table が載っている
-            sire = None
-            mare = None
-            blood_table = soup.select_one(f"table#blood_table{idx}")
-            if blood_table:
-                cells = blood_table.select("td")
-                if len(cells) >= 4:
-                    sire = cells[0].get_text(strip=True)
-                    mare = cells[3].get_text(strip=True)
-
-            horse = {
-                "枠": waku,
-                "馬番": umaban,
-                "馬名": horse_name,
-                "性": sex,
-                "年齢": age,
-                "斤量": weight,
-                "騎手": jockey,
-                "オッズ": odds,
-                "人気": ninki,
-                "父": sire,
-                "母": mare,
-                "過去走": past_race_list
-            }
-
-            horses.append(horse)
-
-        except Exception as e:
-            print("skip horse:", e)
-
-    return horses
-
+    except Exception as e:
+        print("skip horse:", e)
