@@ -1,5 +1,5 @@
 import streamlit as st
-from scraper.jra import get_race_info
+from scraper.netkeiba import get_race_info
 from ai.gemini import analyze_race
 import pandas as pd
 
@@ -7,7 +7,7 @@ st.set_page_config(page_title="競馬予想AI", page_icon="🏇")
 st.title("🏇 競馬予想AI")
 
 # URL入力
-url = st.text_input("レースURLを入力（jra公式から取得してください）", "")
+url = st.text_input("レースURLを入力（netkeibaから取得してください）", "")
 
 if st.button("予想する") and url:
     with st.spinner("出馬表を取得中…"):
@@ -34,6 +34,7 @@ if st.button("予想する") and url:
 
 
         st.success("予想完了！")
+
 
 
 
