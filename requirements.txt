@@ -4,6 +4,7 @@ beautifulsoup4
 pandas
 numpy
 lxml
-google-generativeai
+google-genai
 matplotlib
+
 pyparsing<3.1
