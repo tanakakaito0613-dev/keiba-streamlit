@@ -1,6 +1,6 @@
 from google import genai
 
-client = genai.Client()
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 def score_horse(horse):
     """
@@ -64,3 +64,4 @@ def analyze_race(horses):
     )
 
     return response.text
+
