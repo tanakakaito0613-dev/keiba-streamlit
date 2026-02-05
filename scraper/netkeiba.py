@@ -35,8 +35,12 @@ def get_race_info(url: str):
         if horse_url and horse_url.startswith("/"):
             horse_url = "https://db.netkeiba.com" + horse_url
 
+        waku = cols[0].get_text(strip=True)
+        if not waku:
+            continue
+
         horse = {
-            "枠": cols[0].get_text(strip=True),
+            "枠": waku,
             "馬番": cols[1].get_text(strip=True),
             "馬名": cols[3].get_text(strip=True),
             "オッズ": cols[9].get_text(strip=True),
@@ -83,3 +87,4 @@ def get_race_info(url: str):
         horses.append(horse)
 
     return horses
+
