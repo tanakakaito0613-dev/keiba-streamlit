@@ -13,11 +13,12 @@ HEADERS = {
 
 def get_race_info(url: str):
     res = requests.get(url, headers=HEADERS, timeout=10)
+    res.raise_for_status()
+    res.encoding = "EUC-JP"
     st.write("status:", res.status_code)
     st.write("length:", len(res.text))
     st.write(res.text[:1000])
-    res.raise_for_status()
-
+    
     soup = BeautifulSoup(res.text, "html.parser")
 
     horses = []
@@ -90,6 +91,7 @@ def get_race_info(url: str):
 
         horses.append(horse)
     return horses
+
 
 
 
