@@ -1,4 +1,5 @@
 import requests
+import stramlit as st
 from bs4 import BeautifulSoup
 import time
 
@@ -85,6 +86,7 @@ def get_race_info(url: str):
                 pass
 
         horses.append(horse)
-
+        st.json(horses)
     return horses
+
 
